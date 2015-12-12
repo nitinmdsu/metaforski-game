@@ -55,7 +55,6 @@
 
 			var pattern_library = [
 				(function() { // pattern1
-				 console.log("pattern1");
 					return([
 						[ 1, 0, 0, 0, 1],
 						[ 1, 0, 0, 1, 1],
@@ -65,24 +64,36 @@
 				}),
 
 				(function() { // pattern2
-				 console.log("pattern2");
 					return([
 						[ 1, 1, 0, 0, 1],
 						[ 0, 0, 0, 1, 1],
 						[ 0, 1, 0, 0, 0],
-						[ 0, 1, 1, 0, 1]
+						[ 0, 1, 0, 0, 0]
 					])
-				})
-			];
-			var upcoming_pattern = pattern_library[1]();
+				}),
 
-			function go_up (upcoming_pattern) { blocks.pop(); blocks.unshift(upcoming_pattern.pop()); }
+//				(function() {
+			];
+
+			var buffer_pattern = [
+				[ 0, 0, 0, 0, 0 ],
+				[ 0, 0, 0, 0, 0 ],
+				[ 0, 0, 0, 0, 0 ],
+				[ 0, 0, 0, 0, 0 ],
+			];
+
+			var queued_pattern = buffer_pattern;
+
+			function go_up (queued_pattern) { blocks.pop(); blocks.unshift(queued_pattern.pop()); }
 			function update_block_positions () {
-				if (upcoming_pattern.length == 3)  upcoming_pattern = pattern_library[rand_int(0, pattern_library.length - 1)]().concat(upcoming_pattern);
-				go_up(upcoming_pattern);
+				if (queued_pattern.length == 3) {
+					upcoming_pattern = pattern_library[rand_int(0, pattern_library.length - 1)]();
+					queued_pattern = upcoming_pattern.concat(buffer_pattern).concat(queued_pattern);
+				}
+				go_up(queued_pattern);
 			}
 
-			setInterval(update_block_positions, 500);
+			setInterval(update_block_positions, 250);
 
 			function draw_bg () {
 				ctx.fillStyle = "#eee";
