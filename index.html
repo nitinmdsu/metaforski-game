@@ -20,6 +20,7 @@
 			function lane_pos_of(lane) { return(canvas.width/2 + lane * lane_width)	}
 
 			var player = {
+				dead         : false,
 				default_lane : 0,
 				lane         : 0, 
 				y            : 2 * lane_width,
@@ -51,15 +52,20 @@
 			function redraw_player () {	draw_ball(player.lane, player.y, player.r) }
 
 			function redraw_cars () {	for (car of cars) {
-					car.y += car.v;
-					draw_rect(car.lane, car.y, car.w, car.h);
+				car.y += car.v;
+				draw_rect(car.lane, car.y, car.w, car.h);
+			} }
+
+			function check_for_collisions () { for (car of cars) {
+				if (player.lane == car.lane && player.y <= car.y + car.h/2 && player.y >= car.y - car.h/2) player.dead = true;
 			} }
 			
 			function draw_frame() {
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				redraw_player();
 				redraw_cars();
-				if (
+				check_for_collisions();
+				if (player.dead) ctx.fillText("YOU LOSE", 40, 40);
 				requestAnimationFrame(draw_frame);
 			}
 			
