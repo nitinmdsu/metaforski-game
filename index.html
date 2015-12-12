@@ -15,15 +15,23 @@
 			var canvas = document.getElementById("game");
 			var ctx    = canvas.getContext("2d");
 
+			var num_lanes = 3;
 			var lane_width = canvas.width / 7;
+			function lane_pos_of(lane) { return(canvas.width/2 + lane * lane_width)	}
 
 			var player = {
 				default_lane : 0,
 				lane         : 0, 
 				y            : 2 * lane_width,
-				draw         : function () draw_ball(player.lane, player.y, 12),
-				shiftl       : function () { if (player.lane > -3) player.lane-- },
-				shiftr       : function () { if (player.lane <  3) player.lane++ }
+				r            : 12,
+				shiftl       : function () { if (player.lane > - num_lanes) player.lane-- },
+				shiftr       : function () { if (player.lane <   num_lanes) player.lane++ }
+			}
+			
+			var cars = {
+				lane : [1],
+				y    : [-10],
+				h    : 
 			}
 
 			function draw_ball(lane, y, r) {
@@ -32,14 +40,21 @@
 				ctx.fillStyle = "steelblue"; ctx.fill();
 				ctx.closePath();
 			}
+			
+			function draw_rect(lane, y, w, h) {
+				ctx.rect(lane_pos_of(lane) - w/2, y - h/2, w, h);
+				ctx.fill();
+			}
 
-			function lane_pos_of(lane) {
-				return(canvas.width/2 + lane * lane_width)
+			function redraw_player () {
+				ctx.clearRect(lane_pos_of(player.lane) - player.r, player.y - player.r, 2 * player.r, 2 * player.r);
+				draw_ball(player.lane, player.y, player.r)
 			}
 			
-			function drawFrame() {
+			function draw_frame() {
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
-				player.draw()
+				redraw_player();
+				requestAnimationFrame(draw_frame);
 			}
 			
 			function keyDownHandler(e) {
@@ -47,8 +62,7 @@
 				if (e.keyCode == 39 || e.keyCode == 68) player.shiftr();
 			}
 			document.addEventListener("keydown", keyDownHandler, false);
-			setInterval(drawFrame, 10); // TODO: FRAME LOCKING
-			
+			draw_frame()
 		</script>
 	</body>
 </html>
