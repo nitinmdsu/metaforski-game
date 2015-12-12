@@ -15,25 +15,29 @@
 			var canvas = document.getElementById("game");
 			var ctx    = canvas.getContext("2d");
 
+			var game_over = false;
+			var score     = 100;
+
 			var num_lanes = 3;
 			var lane_width = canvas.width / 7;
 			function lane_pos_of(lane) { return(canvas.width/2 + lane * lane_width)	}
 
 			var player = {
-				dead         : false,
 				default_lane : 0,
 				lane         : 0, 
 				y            : 2 * lane_width,
 				r            : 12,
-				shiftl       : function () { if (player.lane > - num_lanes) player.lane-- },
-				shiftr       : function () { if (player.lane <   num_lanes) player.lane++ }
+				shiftl       : function () { if (player.lane > - num_lanes) { score += 10; player.lane-- } },
+				shiftr       : function () { if (player.lane <   num_lanes) { score += 10; player.lane++ } }
 			}
 			
 			var cars = [
-				{ lane:  1, y: 300, h:  80, v: -4, w: lane_width / 2 },
-				{ lane: -2, y:   0, h:  60, v: 10, w: lane_width / 2 },
-				{ lane:  3, y:   0, h: 150, v:  4, w: lane_width / 2.5 }
+//				{ lane:  1, y: 300, h:  80, v: -0.8, w: lane_width / 2 },
+//{ lane: -2, y:   0, h:  60, v: 10, w: lane_width / 2 },
+				{ lane:  3, y:   0, h: 150, v:  2, w: lane_width / 2 }
 			]
+
+			function rand_int(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
 			function draw_ball(lane, y, r) {
 				ctx.fillStyle = "steelblue"; ctx.fill();
@@ -45,6 +49,7 @@
 			function draw_rect(lane, y, w, h) {
 				ctx.fillStyle = "orange";
 				ctx.fillRect(lane_pos_of(lane) - w/2, y - h/2, w, h);
+				ctx.strokeRect(lane_pos_of(lane) - w/2, y - h/2, w, h);
 			}
 
 			function clear_rect(lane, y, w, h) { ctx.clearRect(lane_pos_of(lane) - w/2, y - h/2, w, h); }
@@ -53,19 +58,25 @@
 
 			function redraw_cars () {	for (car of cars) {
 				car.y += car.v;
+				if (car.y < -100 || car.y >= canvas.height + 100) car.y = canvas.height/2 - (car.lane/Math.abs(car.lane)) * (canvas.height/2 + 10)
 				draw_rect(car.lane, car.y, car.w, car.h);
 			} }
 
-			function check_for_collisions () { for (car of cars) {
-				if (player.lane == car.lane && player.y <= car.y + car.h/2 && player.y >= car.y - car.h/2) player.dead = true;
-			} }
+			function are_you_dead () { 
+				if (score <= 0) game_over = true;
+				for (car of cars) {
+					if (player.lane == car.lane && player.y <= car.y + car.h/2 && player.y >= car.y - car.h/2) game_over = true;
+				}
+			} 
 			
 			function draw_frame() {
+				score--;
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				ctx.fillText("Score: " + score, 40, 40);
 				redraw_player();
 				redraw_cars();
-				check_for_collisions();
-				if (player.dead) ctx.fillText("YOU LOSE", 40, 40);
+				are_you_dead();
+				if (game_over) ctx.fillText("YOU LOSE", 40, 60);
 				requestAnimationFrame(draw_frame);
 			}
 			
