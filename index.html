@@ -5,7 +5,7 @@
 		<title> LD34 - Creeper! </title>
 		<style> 
 			* { padding: 0; margin: 0; }
-			canvas { background: #eee; display: block; margin: 0 auto; }
+			canvas { background: "cream"; display: block; margin: 0 auto; }
 		</style> 
 	</head>
 	<body>
@@ -37,24 +37,38 @@
 			var left_edge = 2 * block_w;
 			var top_edge = 0;
 
-			var update_time = false;
-			function update_now_fn () update_time = true;
-			setInterval(update_now_fn, 100);
 
 			function canv_pos_of(x, y) { return({ x: left_edge + block_w/2 + x * block_w, y: top_edge + block_h/2 + y * block_h })	}
 			function draw_block(x, y) {
 				block_center = canv_pos_of(x, y);
 				ctx.fillStyle = "steelblue";
+				ctx.strokeStyle = "darkblue";
 				ctx.fillRect(block_center.x - block_w/2, block_center.y - block_h/2, block_w, block_h);
 				ctx.strokeRect(block_center.x - block_w/2, block_center.y - block_h/2, block_w, block_h);
 			}
+
 			function draw_all_blocks() {
 				for (row = 0; row < num_y; row++) {
 					for (col = 0; col < num_x; col++) {
 						if (blocks[row][col] == 1) draw_block(col, row);
 			} } }
 
-			function update_blocks (new_row) { blocks.pop(); blocks.unshift(new_row); }
+			upcoming_queue = [
+					[ 1, 0, 0, 0, 1],
+					[ 1, 0, 0, 1, 1],
+					[ 1, 1, 0, 0, 0],
+					[ 1, 1, 1, 0, 1]
+				]
+			function go_up (upcoming_queue) { blocks.pop(); blocks.unshift(upcoming_queue.pop()); }
+			function update_block_positions () {
+				go_up(upcoming_queue);
+			}
+			setInterval(update_block_positions, 1000);
+
+			function draw_bg () {
+				ctx.fillStyle = "#eee";
+				ctx.fillRect(left_edge, top_edge, num_x * block_w, num_y * block_h);
+			}
 
 			var player = {
 				x      : 1, 
@@ -67,10 +81,13 @@
 
 			function draw_ball(x, y, r) {
 				ball_center = canv_pos_of(x, y);
-				ctx.fillStyle = "gold"; ctx.fill(); ctx.stroke();
+				ctx.fillStyle = "gold"; 
+				ctx.lineWidth = 4;
+				ctx.strokeStyle = "orange";
 				ctx.beginPath();
 				ctx.arc(ball_center.x, ball_center.y, r, 0, Math.PI * 2);
 				ctx.closePath();
+				ctx.fill(); ctx.stroke();
 			}
 
 			function are_you_dead () { 
@@ -82,14 +99,11 @@
 			
 			function draw_frame() {
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				draw_bg();
 				draw_all_blocks();
-
-				ctx.fillText("Score: " + score, 40, 40);
-				if (update_time) {
-					update_blocks([0,1,1,0,1]);
-					update_time = false;
-				}
 				player.draw();
+				ctx.fillText("Score: " + score, 40, 40);
+
 				requestAnimationFrame(draw_frame);
 			}
 			
