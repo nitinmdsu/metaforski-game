@@ -29,31 +29,46 @@
 			}
 			
 			var cars = {
-				lane : [1],
-				y    : [-10],
-				h    : 
+				lane : [1, -2],
+				y    : [300, -10],
+				h    : [20, 100],
+				v    : [4, -4],
+				w    : [lane_width / 2, lane_width/2]
 			}
+			var num_cars = cars.lane.length;
 
 			function draw_ball(lane, y, r) {
+				ctx.fillStyle = "steelblue"; ctx.fill();
 				ctx.beginPath();
 				ctx.arc(lane_pos_of(lane), y, r, 0, Math.PI * 2);
-				ctx.fillStyle = "steelblue"; ctx.fill();
 				ctx.closePath();
 			}
 			
 			function draw_rect(lane, y, w, h) {
-				ctx.rect(lane_pos_of(lane) - w/2, y - h/2, w, h);
-				ctx.fill();
+				ctx.fillStyle = "darkred";
+				console.log("drawing rect with ", lane_pos_of(lane) - w/2, y - h/2, w, h)
+				ctx.fillRect(lane_pos_of(lane) - w/2, y - h/2, w, h);
 			}
 
+			function clear_rect(lane, y, w, h) { ctx.clearRect(lane_pos_of(lane) - w/2, y - h/2, w, h); }
+
 			function redraw_player () {
-				ctx.clearRect(lane_pos_of(player.lane) - player.r, player.y - player.r, 2 * player.r, 2 * player.r);
+				clear_rect(player.lane, player.y, 2 * player.r, 2 * player.r);
 				draw_ball(player.lane, player.y, player.r)
+			}
+
+			function redraw_cars () {
+				for (i = 0; i < num_cars; i++) {
+					clear_rect(cars.lane[i], cars.y[i], cars.w[i], cars.h[i]);
+					cars.y[i] += cars.v[i];
+					draw_rect(cars.lane[i], cars.y[i], cars.w[i], cars.h[i]);
+				}
 			}
 			
 			function draw_frame() {
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				redraw_player();
+				redraw_cars();
 				requestAnimationFrame(draw_frame);
 			}
 			
