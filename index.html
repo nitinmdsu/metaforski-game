@@ -1,1 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<title> LD34 - Chicken! </title>
+		<style> 
+			* { padding: 0; margin: 0; }
+			canvas { background: #eee; display: block; margin: 0 auto; }
+		</style> 
+	</head>
+	<body>
+		<p> Instructions go here. </p>
+		<canvas id="game" width="560" height="480"> Canvas goes here! </canvas>
+		<script>
+			var canvas = document.getElementById("game");
+			var ctx    = canvas.getContext("2d");
+
+			var lane_width = canvas.width / 7;
+
+			var player = {
+				default_lane : 0,
+				lane         : 0, 
+				y            : 2 * lane_width,
+				draw         : function () draw_ball(player.lane, player.y, 12),
+				shiftl       : function () { if (player.lane > -3) player.lane-- },
+				shiftr       : function () { if (player.lane <  3) player.lane++ }
+			}
+
+			function draw_ball(lane, y, r) {
+				ctx.beginPath();
+				ctx.arc(lane_pos_of(lane), y, r, 0, Math.PI * 2);
+				ctx.fillStyle = "steelblue"; ctx.fill();
+				ctx.closePath();
+			}
+
+			function lane_pos_of(lane) {
+				return(canvas.width/2 + lane * lane_width)
+			}
+			
+			function drawFrame() {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				player.draw()
+			}
+			
+			function keyDownHandler(e) {
+				if (e.keyCode == 37 || e.keyCode == 65) player.shiftl();
+				if (e.keyCode == 39 || e.keyCode == 68) player.shiftr();
+			}
+			document.addEventListener("keydown", keyDownHandler, false);
+			setInterval(drawFrame, 10); // TODO: FRAME LOCKING
+			
+		</script>
+	</body>
+</html>
 
