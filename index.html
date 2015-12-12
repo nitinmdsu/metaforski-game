@@ -18,7 +18,7 @@
 			var game_over = false;
 			var score     = 0;
 
-			//function rand_int(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+			function rand_int(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
 			var blocks = [ 
 				[ 1, 0, 0, 0, 0 ],
@@ -53,17 +53,36 @@
 						if (blocks[row][col] == 1) draw_block(col, row);
 			} } }
 
-			upcoming_queue = [
-					[ 1, 0, 0, 0, 1],
-					[ 1, 0, 0, 1, 1],
-					[ 1, 1, 0, 0, 0],
-					[ 1, 1, 1, 0, 1]
-				]
-			function go_up (upcoming_queue) { blocks.pop(); blocks.unshift(upcoming_queue.pop()); }
+			var pattern_library = [
+				(function() { // pattern1
+				 console.log("pattern1");
+					return([
+						[ 1, 0, 0, 0, 1],
+						[ 1, 0, 0, 1, 1],
+						[ 1, 1, 0, 0, 0],
+						[ 1, 1, 1, 0, 1]
+					])
+				}),
+
+				(function() { // pattern2
+				 console.log("pattern2");
+					return([
+						[ 1, 1, 0, 0, 1],
+						[ 0, 0, 0, 1, 1],
+						[ 0, 1, 0, 0, 0],
+						[ 0, 1, 1, 0, 1]
+					])
+				})
+			];
+			var upcoming_pattern = pattern_library[1]();
+
+			function go_up (upcoming_pattern) { blocks.pop(); blocks.unshift(upcoming_pattern.pop()); }
 			function update_block_positions () {
-				go_up(upcoming_queue);
+				if (upcoming_pattern.length == 3)  upcoming_pattern = pattern_library[rand_int(0, pattern_library.length - 1)]().concat(upcoming_pattern);
+				go_up(upcoming_pattern);
 			}
-			setInterval(update_block_positions, 1000);
+
+			setInterval(update_block_positions, 500);
 
 			function draw_bg () {
 				ctx.fillStyle = "#eee";
@@ -72,7 +91,7 @@
 
 			var player = {
 				x      : 1, 
-				y      : 2,
+				y      : 3,
 				r      : 12,
 				draw   : function () { draw_ball(player.x, player.y, player.r) },
 				shiftl : function () { if (player.x > 0)         { score += 10; player.x-- } },
