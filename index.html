@@ -28,14 +28,11 @@
 				shiftr       : function () { if (player.lane <   num_lanes) player.lane++ }
 			}
 			
-			var cars = {
-				lane : [1, -2],
-				y    : [300, -10],
-				h    : [20, 100],
-				v    : [4, -4],
-				w    : [lane_width / 2, lane_width/2]
-			}
-			var num_cars = cars.lane.length;
+			var cars = [
+				{ lane:  1, y: 300, h:  80, v: -4, w: lane_width / 2 },
+				{ lane: -2, y:   0, h:  60, v: 10, w: lane_width / 2 },
+				{ lane:  3, y:   0, h: 150, v:  4, w: lane_width / 2.5 }
+			]
 
 			function draw_ball(lane, y, r) {
 				ctx.fillStyle = "steelblue"; ctx.fill();
@@ -45,30 +42,24 @@
 			}
 			
 			function draw_rect(lane, y, w, h) {
-				ctx.fillStyle = "darkred";
-				console.log("drawing rect with ", lane_pos_of(lane) - w/2, y - h/2, w, h)
+				ctx.fillStyle = "orange";
 				ctx.fillRect(lane_pos_of(lane) - w/2, y - h/2, w, h);
 			}
 
 			function clear_rect(lane, y, w, h) { ctx.clearRect(lane_pos_of(lane) - w/2, y - h/2, w, h); }
 
-			function redraw_player () {
-				clear_rect(player.lane, player.y, 2 * player.r, 2 * player.r);
-				draw_ball(player.lane, player.y, player.r)
-			}
+			function redraw_player () {	draw_ball(player.lane, player.y, player.r) }
 
-			function redraw_cars () {
-				for (i = 0; i < num_cars; i++) {
-					clear_rect(cars.lane[i], cars.y[i], cars.w[i], cars.h[i]);
-					cars.y[i] += cars.v[i];
-					draw_rect(cars.lane[i], cars.y[i], cars.w[i], cars.h[i]);
-				}
-			}
+			function redraw_cars () {	for (car of cars) {
+					car.y += car.v;
+					draw_rect(car.lane, car.y, car.w, car.h);
+			} }
 			
 			function draw_frame() {
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				redraw_player();
 				redraw_cars();
+				if (
 				requestAnimationFrame(draw_frame);
 			}
 			
