@@ -57,22 +57,21 @@
 			function update_blocks (new_row) { blocks.pop(); blocks.unshift(new_row); }
 
 			var player = {
-				default_lane : 1,
-				lane         : 1, 
-				y            : 2,
-				r            : 12,
-				shiftl       : function () { if (player.lane > - num_lanes) { score += 10; player.lane-- } },
-				shiftr       : function () { if (player.lane <   num_lanes) { score += 10; player.lane++ } }
+				x      : 1, 
+				y      : 2,
+				r      : 12,
+				draw   : function () { draw_ball(player.x, player.y, player.r) },
+				shiftl : function () { if (player.x > 0)         { score += 10; player.x-- } },
+				shiftr : function () { if (player.x < num_x - 1) { score += 10; player.x++ } }
 			}
 
-			function draw_ball(lane, y, r) {
+			function draw_ball(x, y, r) {
+				ball_center = canv_pos_of(x, y);
 				ctx.fillStyle = "gold"; ctx.fill(); ctx.stroke();
 				ctx.beginPath();
-				ctx.arc(lane_pos_of(lane), y, r, 0, Math.PI * 2);
+				ctx.arc(ball_center.x, ball_center.y, r, 0, Math.PI * 2);
 				ctx.closePath();
 			}
-
-			function redraw_player () {	draw_ball(player.lane, player.y, player.r) }
 
 			function are_you_dead () { 
 				if (score <= 0) game_over = true;
@@ -90,10 +89,7 @@
 					update_blocks([0,1,1,0,1]);
 					update_time = false;
 				}
-//				redraw_player();
-//				redraw_cars();
-			//	are_you_dead();
-	//			if (game_over) ctx.fillText("YOU LOSE", 40, 60);
+				player.draw();
 				requestAnimationFrame(draw_frame);
 			}
 			
