@@ -63,22 +63,54 @@
 					])
 				}),
 
-				(function() { // pattern2
-					return([
-						[ 1, 1, 0, 0, 1],
-						[ 0, 0, 0, 1, 1],
-						[ 0, 1, 0, 0, 0],
-						[ 0, 1, 0, 0, 0]
-					])
-				}),
+				(function() { // gates
+					 var result = [
+						[ 1, 1, 1, 1, 1 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 1, 1, 1, 1, 1 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 1, 1, 1, 1, 1 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 1, 1, 1, 1, 1 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 1, 1, 1, 1, 1 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 1, 1, 1, 1, 1 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0, 0 ],
+					 ];
 
-//				(function() {
+					bias = rand_int(1, 2);
+
+					for(i = 0; i < 6; i++) {
+						where_open = rand_int(bias - 1, num_x - bias);
+						result[i * 5][where_open] = 0;
+					}
+					return(result);
+				})
 			];
 
 			var buffer_pattern = [
 				[ 0, 0, 0, 0, 0 ],
 				[ 0, 0, 0, 0, 0 ],
-				[ 0, 0, 0, 0, 0 ],
+			//	[ 0, 0, 0, 0, 0 ],
 				[ 0, 0, 0, 0, 0 ],
 			];
 
@@ -86,14 +118,14 @@
 
 			function go_up (queued_pattern) { blocks.pop(); blocks.unshift(queued_pattern.pop()); }
 			function update_block_positions () {
-				if (queued_pattern.length == 3) {
+				if (queued_pattern.length <= 3) {
 					upcoming_pattern = pattern_library[rand_int(0, pattern_library.length - 1)]();
 					queued_pattern = upcoming_pattern.concat(buffer_pattern).concat(queued_pattern);
 				}
 				go_up(queued_pattern);
 			}
 
-			setInterval(update_block_positions, 250);
+			setInterval(update_block_positions, 150);
 
 			function draw_bg () {
 				ctx.fillStyle = "#eee";
@@ -102,7 +134,7 @@
 
 			var player = {
 				x      : 1, 
-				y      : 3,
+				y      : 4,
 				r      : 12,
 				draw   : function () { draw_ball(player.x, player.y, player.r) },
 				shiftl : function () { if (player.x > 0)         { score += 10; player.x-- } },
