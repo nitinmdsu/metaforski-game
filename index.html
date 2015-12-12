@@ -30,14 +30,16 @@
 				[ 1, 0, 0, 0, 0 ]
 			];
 
-			num_x = blocks[0].length; // 5
-			num_y = blocks.length; // 7
-			block_w = canvas.width/(num_x + 2);
-			block_h = canvas.height/(num_y);
-			left_edge = 2 * block_w;
-			top_edge = 0;
-			update_every = 20;
-			update_now   = 0;
+			var num_x = blocks[0].length; // 5
+			var num_y = blocks.length; // 7
+			var block_w = canvas.width/(num_x + 2);
+			var block_h = canvas.height/(num_y);
+			var left_edge = 2 * block_w;
+			var top_edge = 0;
+
+			var update_time = false;
+			function update_now_fn () update_time = true;
+			setInterval(update_now_fn, 100);
 
 			function canv_pos_of(x, y) { return({ x: left_edge + block_w/2 + x * block_w, y: top_edge + block_h/2 + y * block_h })	}
 			function draw_block(x, y) {
@@ -72,12 +74,6 @@
 
 			function redraw_player () {	draw_ball(player.lane, player.y, player.r) }
 
-			function redraw_cars () {	for (car of cars) {
-				car.y += car.v;
-				if (car.y < -100 || car.y >= canvas.height + 100) car.y = canvas.height/2 - (car.lane/Math.abs(car.lane)) * (canvas.height/2 + 10)
-				draw_rect(car.lane, car.y, car.w, car.h);
-			} }
-
 			function are_you_dead () { 
 				if (score <= 0) game_over = true;
 				for (car of cars) {
@@ -89,12 +85,10 @@
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				draw_all_blocks();
 
-				update_now++;
 				ctx.fillText("Score: " + score, 40, 40);
-				ctx.fillText("next row in : " + update_now + " / " + update_every, 40, 60);
-				if (update_now == update_every) {
-					update_blocks([0, 1, 0, 1, 0]);
-					update_now = 0;
+				if (update_time) {
+					update_blocks([0,1,1,0,1]);
+					update_time = false;
 				}
 //				redraw_player();
 //				redraw_cars();
