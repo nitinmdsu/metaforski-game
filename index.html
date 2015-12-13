@@ -182,9 +182,9 @@
 			function update_logic () {
 				millis += min_freq;
 				if (millis % (min_freq * speed_multiplier) == 0) update_block_positions();
+				if (millis % 1000 == 0) update_score();
 			}
 			var updater = undefined;
-			var scorer  = undefined;
 
 			function update_score () {
 				if (game_state == "play") {
@@ -267,6 +267,7 @@
 				["awkward memories from high-school", "you trying to sleep", "hours of rest, lost forever"],
 				["a metaphor", "you, not getting it", "your futile attempts"],
 				["responsibilities", "you", "your fears and failures"],
+				["trees", "ski-dude or ski-dudette", "yeti"],
 				["a circle", "rectangles", "mount sumeru"],
 				["water bodies", "fire-type pokemon", "ashes"],
 			];
@@ -294,21 +295,25 @@
 				ctx.fillText("(PRESS ANY KEY TO START!)", canvas.width/2, canvas.height/2 + 140);
 			}
 
+			function game_overer () {
+					clearInterval(updater);
+					exclaim_text = exclaim_choices[rand_int(0, exclaim_choices.length - 1)];
+					game_state = "outro";
+			}
+
 			function draw_play () {
 				draw_bg();
 				draw_all_blocks();
 				player.draw();
 
-				ctx.fillStyle = "black";
-				ctx.font = "bold 12px serif";
-				ctx.fillText("Score: " + score, 40, 40);
-
-				if (collision_happened()) {
-					clearInterval(updater);
-					clearInterval(scorer);
-					exclaim_text = exclaim_choices[rand_int(0, exclaim_choices.length - 1)];
-					game_state = "outro";
+				if (score > 0) {
+					ctx.fillStyle = "black";
+					ctx.font = "bold 12px serif";
+					ctx.fillText("Score: " + score, 40, 40);
 				}
+
+				window.onBlur = game_overer;
+				if (collision_happened()) game_overer();
 			}
 
 			var exclaim_choices = ["BOING!", "CRASH!", "OH NOES!", "WELP!", "HMM...", "AHA!", "AWW, MAN!" ];
@@ -343,7 +348,6 @@
 			
 			function reset_game () {
 				updater = setInterval(update_logic, min_freq);
- 				scorer  = setInterval(update_score, 1000);
 				score = 0;
 				speed_multiplier = 25;
 				height_reached = 0;
