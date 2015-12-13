@@ -19,6 +19,11 @@
 			var score     = 0;
 
 			function rand_int(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+			function rand_walk(curr, min, max) {
+				if (curr == min) return(min + 1);
+				if (curr == max) return(max - 1);
+				return(curr + [-1, 1][rand_int(0, 1)]);
+			}
 
 			var blocks = [ 
 				[ 1, 0, 0, 0 ],
@@ -55,7 +60,7 @@
 
 			var pattern_library = [
 				(function() { // gates
-					 var template = [
+					var template = [
 						[ 1, 1, 1, 1 ],
 						[ 0, 0, 0, 0 ],
 						[ 0, 0, 0, 0 ],
@@ -70,6 +75,22 @@
 						where_open = rand_int(0, num_x - 1);
 						result = (JSON.parse(JSON.stringify(template))).concat(result);
 						result[0][where_open] = 0;
+					}
+					return(result);
+				}),
+
+				(function() { // tunnel
+				 	var template = [[1, 1, 1, 1]]
+					var result = [[0, 0, 0, 0]];
+					curr_open  = rand_int(0, num_x - 1);
+					
+					for(i = 0; i < rand_int(5, 20); i++) {
+						next_open = rand_walk(curr_open, 0, num_x - 1);
+						result = (JSON.parse(JSON.stringify(template))).concat(JSON.parse(JSON.stringify(template))).concat(result);
+						result[0][curr_open] = 0;
+						result[0][next_open] = 0;
+						result[1][curr_open] = 0;
+						curr_open = next_open;
 					}
 					return(result);
 				})
