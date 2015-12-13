@@ -159,6 +159,7 @@
 
 			function go_up (queued_pattern) { blocks.pop(); blocks.unshift(queued_pattern.pop()); }
 			function update_block_positions () {
+				if (game_state != "play") return(0);
 				if (queued_pattern.length <= 3) {
 					upcoming_pattern = pattern_library[rand_int(0, pattern_library.length - 1)]();
 					queued_pattern = upcoming_pattern.concat(buffer_pattern).concat(queued_pattern);
@@ -166,7 +167,12 @@
 				go_up(queued_pattern);
 			}
 
-			setInterval(update_block_positions, 120);
+			setInterval(update_block_positions, 110);
+			setInterval(update_score, 1000);
+
+			function update_score () {
+				if (game_state == "play") score++;
+			}
 
 			function draw_bg () {
 				ctx.fillStyle = "#eee";
@@ -178,8 +184,8 @@
 				y      : num_x,
 				r      : block_h * 0.2,
 				draw   : function () { draw_ball(player.x, player.y, player.r) },
-				shiftl : function () { if (player.x > 0)         { score += 10; player.x-- } },
-				shiftr : function () { if (player.x < num_x - 1) { score += 10; player.x++ } }
+				shiftl : function () { if (player.x > 0) { player.x-- } },
+				shiftr : function () { if (player.x < num_x - 1) { player.x++ } }
 			}
 
 			function draw_ball(x, y, r) {
@@ -199,10 +205,12 @@
 			} 
 
 			function draw_intro () {
+				ctx.fillStyle = "black";
 				ctx.fillText("Press any key!", canvas.width/2 - 60, canvas.height/2);
 			}
 			
 			function draw_are_you_ready () {
+				ctx.fillStyle = "black";
 				ctx.fillText("READY? (Press any key!)", canvas.width/2 - 60, canvas.height/2);
 			}
 
@@ -217,14 +225,15 @@
 			function draw_outro () {
 				ctx.fillStyle = "black";
 				ctx.fillText("GAME OVER, man. Good run, though.", canvas.width/2 - 60, canvas.height/2);
+				ctx.fillText("You lasted: " + score + " seconds", canvas.width/2 - 60, canvas.height/2 + 20);
 			}
 			
 			function draw_frame () {
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				if (game_state == "intro") draw_intro();
-				if (game_state == "are_you_ready") draw_are_you_ready();
-				if (game_state == "play") draw_play();
-				if (game_state == "outro") draw_outro();
+				else if (game_state == "are_you_ready") draw_are_you_ready();
+				else if (game_state == "play") draw_play();
+				else if (game_state == "outro") draw_outro();
 				requestAnimationFrame(draw_frame);
 			}
 			
