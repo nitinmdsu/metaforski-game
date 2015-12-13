@@ -19,6 +19,7 @@
 			var game_over = false;
 			var score     = 0;
 
+			function clone(x) { return(JSON.parse(JSON.stringify(x))) }
 			function rand_int(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 			function rand_walk(curr, min, max) {
 				if (curr == min) return(min + 1);
@@ -33,7 +34,8 @@
 				[ 0, 0, 0, 0 ]
 			];
 
-			var blocks = JSON.parse(JSON.stringify(buffer_pattern)).concat(JSON.parse(JSON.stringify(buffer_pattern)))
+			var blocks = clone(buffer_pattern).concat(clone(buffer_pattern));
+			var	queued_pattern = clone(buffer_pattern);
 
 			var num_x = blocks[0].length; // 5
 			var num_y = blocks.length; // 7
@@ -48,6 +50,7 @@
 				block_center = canv_pos_of(x, y);
 				ctx.fillStyle = "steelblue";
 				ctx.strokeStyle = "darkblue";
+				ctx.lineWidth = 4;
 				ctx.fillRect(block_center.x - block_w/2, block_center.y - block_h/2, block_w, block_h);
 				ctx.strokeRect(block_center.x - block_w/2, block_center.y - block_h/2, block_w, block_h);
 			}
@@ -153,7 +156,6 @@
 				})
 			];
 
-			var queued_pattern = buffer_pattern;
 
 			function go_up (queued_pattern) { blocks.pop(); blocks.unshift(queued_pattern.pop()); }
 			function update_block_positions () {
@@ -192,6 +194,7 @@
 			}
 
 			function collision_happened () { 
+				// return(false); // for testing
 				return(blocks[player.y][player.x] == 1)
 			} 
 
@@ -208,10 +211,11 @@
 			}
 
 			function draw_outro () {
+				ctx.fillStyle = "black";
 				ctx.fillText("GAME OVER, man. Good run, though.", canvas.width/2 - 60, canvas.height/2);
 			}
 			
-			function draw_frame() {
+			function draw_frame () {
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				if (game_state == "intro") draw_intro();
 				if (game_state == "play") draw_play();
@@ -219,11 +223,20 @@
 				requestAnimationFrame(draw_frame);
 			}
 			
+			function reset_game () {
+				score = 0;
+				blocks = clone(buffer_pattern).concat(clone(buffer_pattern)).concat([0, 0, 0, 0, 0]).concat([0, 0, 0, 0, ]);
+				queued_pattern = clone(buffer_pattern).concat(clone(buffer_pattern));
+				update_block_positions();
+				game_state = "play";
+			}
+
 			function keyDownHandler(e) {
 				if (e.keyCode == 37 || e.keyCode == 65) player.shiftl();
 				if (e.keyCode == 39 || e.keyCode == 68) player.shiftr();
-				if (game_state == "intro" || game_state == "outro") game_state = "play";
+				if (game_state == "intro" || game_state == "outro") reset_game();
 			}
+
 			document.addEventListener("keydown", keyDownHandler, false);
 			draw_frame()
 		</script>
