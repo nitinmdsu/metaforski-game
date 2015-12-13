@@ -5,11 +5,11 @@
 		<title> LD34 - Creeper! </title>
 		<style> 
 			* { padding: 0; margin: 0; }
-			canvas { background: "cream"; display: block; margin: 0 auto; }
+			canvas { background: "grey"; display: block; margin: 0 auto; }
 		</style> 
 	</head>
 	<body>
-		<canvas id="game" width="315" height="360"> Canvas goes here! </canvas>
+		<canvas id="game" width="319" height="364"> Canvas goes here! </canvas>
 		<script>
 			var canvas = document.getElementById("game");
 			var ctx    = canvas.getContext("2d");
@@ -38,10 +38,10 @@
 
 			var num_x = blocks[0].length; // 5
 			var num_y = blocks.length; // 7
-			var block_w = canvas.width/num_x;
-			var block_h = canvas.height/num_y;
-			var left_edge = 0;
-			var top_edge = 0;
+			var block_w = (canvas.width - 4)/num_x;
+			var block_h = (canvas.height - 4)/num_y;
+			var left_edge = 2;
+			var top_edge = 2;
 
 
 			function canv_pos_of(x, y) { return({ x: left_edge + block_w/2 + x * block_w, y: top_edge + block_h/2 + y * block_h })	}
@@ -49,7 +49,7 @@
 				block_center = canv_pos_of(x, y);
 				ctx.fillStyle = "steelblue";
 				ctx.strokeStyle = "darkblue";
-				ctx.lineWidth = 4;
+				ctx.lineWidth = 3;
 				ctx.fillRect(block_center.x - block_w/2, block_center.y - block_h/2, block_w, block_h);
 				ctx.strokeRect(block_center.x - block_w/2, block_center.y - block_h/2, block_w, block_h);
 			}
@@ -144,7 +144,7 @@
 						[0, 0, 0, 0],
 					];
 					result = [];
-					for(i = 0; i < rand_int(4, 5); i ++) {
+					for(i = 0; i < rand_int(2, 3); i ++) {
 						curr = JSON.parse(JSON.stringify(template));
 						rand_1 = rand_int(0, num_x - 1) 
 						curr[0][rand_1] = 1;
@@ -236,6 +236,8 @@
 			}
 			
 			var metaphors = [
+				["poor people", "rich guy in ferrari", "fake notes to raise + crush their hopes"],
+				["no skills", "little time", "excuse to make the 'growth' theme"],
 				["rival racers in relative motion", "your trusty motorbike", "burnt rubber"],
 				["literal obstacles in your path", "you, escaping from octopusmonster", "icky tentacles"],
 				["helpless fluffy kittens", "dark road", "blood from the last time you did this"],
@@ -247,6 +249,7 @@
 				["your absentee father", "your try-hard mom", "your messed-up life"],
 				["rectangular rain", "circular sun", "some sort of tapeworm, presumably"],
 				["windows into your soul", "linux into your mind", "macs up your ass"],
+				["the sheer difficulty of some things", "motivation levels", "small, worthwhile successes"],
 				["lazy dogs", "a quick brown fox", "the inevitable chem-trail"],
 				["the zen state of mind", "you", "the inevitable regrets"],
 				["intrusive thoughts about sex", "your mind", "um... i'd rather not say this time, actually"],
@@ -254,8 +257,10 @@
 				["the absurdities of life", "you", "your illusory achievements"],
 				["fungal cheese", "bacteria", "something disgusting, no doubt"],
 				["chocolate bars", "a fat guy on a diet", "his longest streak, the poor man"],
-				["blue skies beyond", "work you need to get done", "that long sigh you just put"],
-				["pools of moisture", "a spore of some sort", "ugh.. whatevre this is"],
+				["internet time-sinks", "work that needs to be done", "work that somehow happened"],
+				["distractions", "focus", "some... results, hopefully"],
+				["spittle from your professor's mouth", "inattentive student you", "nothing but doodles in your notebook"],
+				["pools of moisture", "a spore of some sort", "ugh.. whatever this is"],
 				["inspiration", "you trying too hard", "shitty art"],
 				["awkward memories from high-school", "you trying to sleep", "hours of rest, lost forever"],
 				["a metaphor", "you, not getting it", "your futile attempts"],
