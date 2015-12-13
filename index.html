@@ -124,7 +124,6 @@
 						[0, 0, 0, 0],
 						[0, 0, 0, 0],
 					];
-					console.log("HERE");
 					result = [];
 					for(i = 0; i < rand_int(4, 5); i ++) {
 						curr = JSON.parse(JSON.stringify(template));
@@ -142,7 +141,6 @@
 						[0, 0, 0, 0],
 						[0, 0, 0, 0],
 					];
-					console.log("HERE");
 					result = [];
 					for(i = 0; i < rand_int(4, 5); i ++) {
 						curr = JSON.parse(JSON.stringify(template));
@@ -193,26 +191,38 @@
 				ctx.fill(); ctx.stroke();
 			}
 
-			function are_you_dead () { 
-				if (score <= 0) game_over = true;
-				for (car of cars) {
-					if (player.lane == car.lane && player.y <= car.y + car.h/2 && player.y >= car.y - car.h/2) game_over = true;
-				}
+			function collision_happened () { 
+				return(blocks[player.y][player.x] == 1)
 			} 
-			
-			function draw_frame() {
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+			function draw_intro () {
+				ctx.fillText("Press any key!", canvas.width/2 - 60, canvas.height/2);
+			}
+
+			function draw_play () {
 				draw_bg();
 				draw_all_blocks();
 				player.draw();
 				ctx.fillText("Score: " + score, 40, 40);
+				if (collision_happened()) game_state = "outro";
+			}
 
+			function draw_outro () {
+				ctx.fillText("GAME OVER, man. Good run, though.", canvas.width/2 - 60, canvas.height/2);
+			}
+			
+			function draw_frame() {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				if (game_state == "intro") draw_intro();
+				if (game_state == "play") draw_play();
+				if (game_state == "outro") draw_outro();
 				requestAnimationFrame(draw_frame);
 			}
 			
 			function keyDownHandler(e) {
 				if (e.keyCode == 37 || e.keyCode == 65) player.shiftl();
 				if (e.keyCode == 39 || e.keyCode == 68) player.shiftr();
+				if (game_state == "intro" || game_state == "outro") game_state = "play";
 			}
 			document.addEventListener("keydown", keyDownHandler, false);
 			draw_frame()
