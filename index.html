@@ -10,7 +10,7 @@
 	</head>
 	<body>
 		<p> Instructions go here. </p>
-		<canvas id="game" width="640" height="480"> Canvas goes here! </canvas>
+		<canvas id="game" width="420" height="480"> Canvas goes here! </canvas>
 		<script>
 			var canvas = document.getElementById("game");
 			var ctx    = canvas.getContext("2d");
@@ -21,20 +21,20 @@
 			function rand_int(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
 			var blocks = [ 
-				[ 1, 0, 0, 0, 0 ],
-				[ 0, 0, 0, 0, 0 ],
-				[ 0, 0, 1, 1, 0 ],
-				[ 1, 0, 1, 0, 0 ],
-				[ 1, 0, 0, 0, 0 ],
-				[ 1, 0, 0, 0, 0 ],
-				[ 1, 0, 0, 0, 0 ]
+				[ 1, 0, 0, 0 ],
+				[ 0, 0, 0, 0 ],
+				[ 0, 0, 1, 1 ],
+				[ 1, 0, 1, 0 ],
+				[ 1, 0, 0, 0 ],
+				[ 1, 0, 0, 0 ],
+				[ 1, 0, 0, 0 ]
 			];
 
 			var num_x = blocks[0].length; // 5
 			var num_y = blocks.length; // 7
-			var block_w = canvas.width/(num_x + 2);
-			var block_h = canvas.height/(num_y);
-			var left_edge = 2 * block_w;
+			var block_w = canvas.width/num_x;
+			var block_h = canvas.height/num_y;
+			var left_edge = 0;
 			var top_edge = 0;
 
 
@@ -56,18 +56,18 @@
 			var pattern_library = [
 				(function() { // gates
 					 var template = [
-						[ 1, 1, 1, 1, 1 ],
-						[ 0, 0, 0, 0, 0 ],
-						[ 0, 0, 0, 0, 0 ],
-						[ 0, 0, 0, 0, 0 ],
-						[ 0, 0, 0, 0, 0 ],
+						[ 1, 1, 1, 1 ],
+						[ 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0 ],
+						[ 0, 0, 0, 0 ],
 					];
 
-					var bias = rand_int(1, 2);
-					var result = [[0, 0, 0, 0, 0]];
+					var_num_gates = rand_int(4, 7);
+					var result = [[0, 0, 0, 0]];
 
-					for(i = 0; i < 6; i++) {
-						where_open = rand_int(bias - 1, num_x - bias);
+					for(i = 0; i < var_num_gates; i++) {
+						where_open = rand_int(0, num_x - 1);
 						result = (JSON.parse(JSON.stringify(template))).concat(result);
 						result[0][where_open] = 0;
 					}
@@ -76,10 +76,10 @@
 			];
 
 			var buffer_pattern = [
-				[ 0, 0, 0, 0, 0 ],
-				[ 0, 0, 0, 0, 0 ],
-				[ 0, 0, 0, 0, 0 ],
-				[ 0, 0, 0, 0, 0 ]
+				[ 0, 0, 0, 0 ],
+				[ 0, 0, 0, 0 ],
+				[ 0, 0, 0, 0 ],
+				[ 0, 0, 0, 0 ]
 			];
 
 			var queued_pattern = buffer_pattern;
@@ -93,7 +93,7 @@
 				go_up(queued_pattern);
 			}
 
-			setInterval(update_block_positions, 150);
+			setInterval(update_block_positions, 130);
 
 			function draw_bg () {
 				ctx.fillStyle = "#eee";
@@ -102,7 +102,7 @@
 
 			var player = {
 				x      : 1, 
-				y      : 4,
+				y      : num_x,
 				r      : 12,
 				draw   : function () { draw_ball(player.x, player.y, player.r) },
 				shiftl : function () { if (player.x > 0)         { score += 10; player.x-- } },
