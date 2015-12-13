@@ -156,22 +156,40 @@
 				})
 			];
 
+			function go_faster() {
+				if (speed_multiplier > 15) speed_multiplier -= 5;
+				else if (speed_multiplier > 10) speed_multiplier -= 1;
+			}
 
 			function go_up (queued_pattern) { blocks.pop(); blocks.unshift(queued_pattern.pop()); }
 			function update_block_positions () {
+				height_reached++;
 				if (game_state != "play") return(0);
 				if (queued_pattern.length <= 3) {
 					upcoming_pattern = pattern_library[rand_int(0, pattern_library.length - 1)]();
 					queued_pattern = upcoming_pattern.concat(buffer_pattern).concat(queued_pattern);
+					next_safe_height = height_reached + 5;
 				}
+				if (height_reached == next_safe_height) go_faster();
 				go_up(queued_pattern);
 			}
 
-			setInterval(update_block_positions, 110);
-			setInterval(update_score, 1000);
+			var height_reached = 0;
+			var next_safe_height = 0;
+			var min_freq = 10;
+			var speed_multiplier = 25;
+			var millis = 0;
+			function update_logic () {
+				millis += min_freq;
+				if (millis % (min_freq * speed_multiplier) == 0) update_block_positions();
+			}
+			var updater = undefined;
+			var scorer  = undefined;
 
 			function update_score () {
-				if (game_state == "play") score++;
+				if (game_state == "play") {
+					score++;
+				}
 			}
 
 			function draw_bg () {
@@ -219,7 +237,11 @@
 				draw_all_blocks();
 				player.draw();
 				ctx.fillText("Score: " + score, 40, 40);
-				if (collision_happened()) game_state = "outro";
+				if (collision_happened()) {
+					clearInterval(updater);
+					clearInterval(scorer);
+					game_state = "outro";
+				}
 			}
 
 			function draw_outro () {
@@ -238,7 +260,12 @@
 			}
 			
 			function reset_game () {
+				updater = setInterval(update_logic, min_freq);
+ 				scorer  = setInterval(update_score, 1000);
 				score = 0;
+				speed_multiplier = 25;
+				height_reached = 0;
+				next_safe_height = 0;
 				blocks = clone(buffer_pattern).concat(clone(buffer_pattern)).concat([0, 0, 0, 0, 0]).concat([0, 0, 0, 0, ]);
 				queued_pattern = clone(buffer_pattern).concat(clone(buffer_pattern));
 				update_block_positions();
