@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8"/>
-		<title> LD34 - Creeper! </title>
+		<title> LD34 - Metaforski! (For lack of a better name!) </title>
 		<style> 
 			* { padding: 0; margin: 0; }
 			canvas { background: "grey"; display: block; margin: 0 auto; }
@@ -11,6 +11,10 @@
 	<body>
 		<canvas id="game" width="640" height="480"> Canvas goes here! </canvas>
 		<script>
+			
+			// Seriously, it's the worst code ever. I sort of gave up midway. Don't judge me.
+			// 2015-12-13 (<--- to remind myself of when i wrote this abomination)
+				
 			var canvas = document.getElementById("game");
 			var ctx    = canvas.getContext("2d");
 
@@ -237,9 +241,21 @@
 			}
 			
 			var metaphors = [
+				["candy", "kid in candy shop", "wasted youth"],
+				["holes of some kind", "peg of some kind", "utter waste of time"],
+				["asteroids", "laika 2", "time spent as space-dog"],
+				["acid pools that look like fresh water", "tourists", "fond memories"],
+				["icebergs", "titanic", "violin-recital-count"],
+				["rebel scum", "plucky spherical spaceship", "time spent on dark side"],
+				["death", "you", "time spent in transitionary period"],
+				["urge to scratch", "itchy guy", "silent suffering"],
+				["people's personal spaces", "just needs a hug", "silent suffering"],
+				["sapphire crystals", "blind guy", "time spent not knowing what he missed"],
+				["molten sulphur", "chicken on fire", "time spent in blaze of glory"],
 				["nothing", "nothing", "nothing at all"],
+				["fresh leaves in the wind", "calm, open skies", "somebody farting"],
 				["poor people", "rich guy in ferrari", "fake notes to raise + crush their hopes"],
-				["no skills", "little time", "excuse to make the 'growth' theme"],
+				["no skills", "little time", "fun had"],
 				["rival racers in relative motion", "your trusty motorbike", "burnt rubber"],
 				["literal obstacles in your path", "you, escaping from a stray octopus", "icky tentacles"],
 				["helpless fluffy kittens", "dark road", "blood from the last time you did this"],
@@ -255,7 +271,7 @@
 				["lazy dogs", "a quick brown fox", "the inevitable chem-trail"],
 				["the zen state of mind", "you", "the inevitable regrets"],
 				["intrusive thoughts about sex", "your mind", "um... i'd rather not say this time, actually"],
-				["memories of your ex", "your mind", "um.. i'd rather not say this time, actually"],
+				["memories of your ex", "your mind", "unfounded rage"],
 				["the absurdities of life", "you", "your illusory achievements"],
 				["fungal cheese", "bacteria", "something disgusting, no doubt"],
 				["chocolate bars", "a fat guy on a diet", "his longest streak, the poor man"],
@@ -269,7 +285,6 @@
 				["responsibilities", "you", "your fears and failures"],
 				["trees", "ski-dude or ski-dudette", "yeti"],
 				["a circle", "rectangles", "mount sumeru"],
-				["water bodies", "fire-type pokemon", "ashes"],
 			];
 			function draw_are_you_ready () {
 				ctx.fillStyle = "black";
